@@ -21,11 +21,38 @@ export default class Base64Decoder {
     }
 
     update(buffer) {
+        const len = buffer.length;
+
+        // fast path: a body line is almost always pure base64, so a read-only
+        // validity scan + bulk copy beats the filtering per-byte writes
+        let allValid = true;
+        for (let i = 0; i < len; i++) {
+            if (!base64ValidCodes[buffer[i]]) {
+                allValid = false;
+                break;
+            }
+        }
+
+        if (allValid) {
+            let offset = 0;
+            while (offset < len) {
+                const space = this.pending.length - this.pendingLen;
+                const take = len - offset <= space ? len - offset : space;
+                this.pending.set(offset === 0 && take === len ? buffer : buffer.subarray(offset, offset + take), this.pendingLen);
+                this.pendingLen += take;
+                offset += take;
+                if (this.pendingLen === this.pending.length) {
+                    this.pendingLen = this.flushDecoded(this.pendingLen);
+                }
+            }
+            return;
+        }
+
         const pending = this.pending;
         const capacity = pending.length;
         let pendingLen = this.pendingLen;
 
-        for (let i = 0; i < buffer.length; i++) {
+        for (let i = 0; i < len; i++) {
             const c = buffer[i];
             if (base64ValidCodes[c]) {
                 pending[pendingLen++] = c;
