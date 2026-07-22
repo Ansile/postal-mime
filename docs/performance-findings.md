@@ -3,7 +3,8 @@
 Методология: [performance-testing-plan.md](./performance-testing-plan.md). Харнесс: [`perf/`](../perf).
 
 Замеры: postal-mime 2.7.5, Apple Silicon (darwin arm64), Node v24.12.0,
-Chromium 143 (playwright 1.57.0), median по 10 итерациям (+3 warmup).
+Chromium 143–149 (playwright 1.57–1.61, vitest 3.2.4 и 4.1.10 дают совпадающие в пределах
+шума числа), median по 10 итерациям (+3 warmup).
 Полные данные — `perf/results/baseline.{node,chromium}.json`.
 
 ## 1. Базлайн

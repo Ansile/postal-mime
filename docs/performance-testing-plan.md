@@ -29,8 +29,9 @@
 ## 3. Харнесс
 
 Стек: **vitest + `vitest bench` (tinybench) + Vitest Browser Mode (playwright/chromium)**.
-Проверено: bench-режим работает в Browser Mode на vitest 3.2.x, включая `--outputJson`.
-Версии раннера пиновать — benchmark-режим экспериментальный.
+Проверено: bench-режим работает в Browser Mode и на vitest 3.2.x (`provider: 'playwright'` +
+`@vitest/browser`), и на vitest 4.x (`provider: playwright()` из `@vitest/browser-playwright`),
+включая `--outputJson`. Версии раннера пиновать — benchmark-режим экспериментальный.
 
 Разделение ответственности (единственный библиотеко-зависимый файл — адаптер):
 

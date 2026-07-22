@@ -1,4 +1,5 @@
 import { defineConfig } from 'vitest/config';
+import { playwright } from '@vitest/browser-playwright';
 import { perfFixturesPlugin } from './fixtures-plugin.js';
 
 export default defineConfig({
@@ -14,7 +15,7 @@ export default defineConfig({
         browser: {
             enabled: true,
             headless: true,
-            provider: 'playwright',
+            provider: playwright(),
             instances: [{ browser: 'chromium' }]
         }
     }

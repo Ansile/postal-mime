@@ -1,4 +1,5 @@
 import { defineConfig } from 'vitest/config';
+import { playwright } from '@vitest/browser-playwright';
 import { perfFixturesPlugin } from './fixtures-plugin.js';
 import { startCpuProfile, stopCpuProfile } from './browser-commands.js';
 
@@ -11,7 +12,7 @@ export default defineConfig({
         browser: {
             enabled: true,
             headless: true,
-            provider: 'playwright',
+            provider: playwright(),
             instances: [{ browser: 'chromium' }],
             commands: { startCpuProfile, stopCpuProfile }
         }
