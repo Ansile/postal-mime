@@ -42,6 +42,47 @@ export function decodeBase64(base64) {
     return arrayBuffer;
 }
 
+// Same as decodeBase64, but takes base64 alphabet byte codes (no padding)
+// instead of a string. `len` limits how many bytes of `codes` are used.
+export function decodeBase64Bytes(codes, len) {
+    const remainder = len % 4;
+    const mainLength = len - remainder;
+
+    let bufferLength = (mainLength / 4) * 3;
+    if (remainder === 3) {
+        bufferLength += 2;
+    } else if (remainder === 2) {
+        bufferLength += 1;
+    }
+
+    const arrayBuffer = new ArrayBuffer(bufferLength);
+    const bytes = new Uint8Array(arrayBuffer);
+
+    let p = 0;
+    let i = 0;
+
+    for (; i < mainLength; i += 4) {
+        let encoded1 = base64Lookup[codes[i]];
+        let encoded2 = base64Lookup[codes[i + 1]];
+        let encoded3 = base64Lookup[codes[i + 2]];
+        let encoded4 = base64Lookup[codes[i + 3]];
+
+        bytes[p++] = (encoded1 << 2) | (encoded2 >> 4);
+        bytes[p++] = ((encoded2 & 15) << 4) | (encoded3 >> 2);
+        bytes[p++] = ((encoded3 & 3) << 6) | (encoded4 & 63);
+    }
+
+    if (remainder === 2) {
+        bytes[p] = (base64Lookup[codes[i]] << 2) | (base64Lookup[codes[i + 1]] >> 4);
+    } else if (remainder === 3) {
+        let encoded2 = base64Lookup[codes[i + 1]];
+        bytes[p++] = (base64Lookup[codes[i]] << 2) | (encoded2 >> 4);
+        bytes[p] = ((encoded2 & 15) << 4) | (base64Lookup[codes[i + 2]] >> 2);
+    }
+
+    return arrayBuffer;
+}
+
 // Charset aliases that the WHATWG Encoding Standard (and thus TextDecoder in
 // browsers and Workers) does not recognize, but that map cleanly to a supported
 // encoding. Node's ICU-backed TextDecoder resolves these natively; strict WHATWG

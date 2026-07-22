@@ -1,46 +1,63 @@
-import { decodeBase64, blobToArrayBuffer } from './decode-strings.js';
+import { decodeBase64Bytes, blobToArrayBuffer } from './decode-strings.js';
+
+// Bytes that belong to the base64 alphabet (padding excluded — decodeBase64Bytes
+// derives the tail length from the code count, so '=' carries no information here)
+const base64ValidCodes = new Uint8Array(256);
+for (let i = 0; i < 64; i++) {
+    base64ValidCodes['ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/'.charCodeAt(i)] = 1;
+}
 
 export default class Base64Decoder {
     constructor(opts) {
         opts = opts || {};
 
-        this.decoder = opts.decoder || new TextDecoder();
-
         this.maxChunkSize = 100 * 1024;
 
         this.chunks = [];
 
-        this.remainder = '';
+        // accumulates raw base64 byte codes across line boundaries
+        this.pending = new Uint8Array(this.maxChunkSize);
+        this.pendingLen = 0;
     }
 
     update(buffer) {
-        let str = this.decoder.decode(buffer);
+        const pending = this.pending;
+        const capacity = pending.length;
+        let pendingLen = this.pendingLen;
 
-        str = str.replace(/[^a-zA-Z0-9+\/]+/g, '');
-
-        this.remainder += str;
-
-        if (this.remainder.length >= this.maxChunkSize) {
-            let allowedBytes = Math.floor(this.remainder.length / 4) * 4;
-            let base64Str;
-
-            if (allowedBytes === this.remainder.length) {
-                base64Str = this.remainder;
-                this.remainder = '';
-            } else {
-                base64Str = this.remainder.substr(0, allowedBytes);
-                this.remainder = this.remainder.substr(allowedBytes);
-            }
-
-            if (base64Str.length) {
-                this.chunks.push(decodeBase64(base64Str));
+        for (let i = 0; i < buffer.length; i++) {
+            const c = buffer[i];
+            if (base64ValidCodes[c]) {
+                pending[pendingLen++] = c;
+                if (pendingLen === capacity) {
+                    pendingLen = this.flushDecoded(pendingLen);
+                }
             }
         }
+
+        this.pendingLen = pendingLen;
+    }
+
+    // decodes the 4-aligned prefix of pending, keeps the 0-3 byte tail
+    flushDecoded(pendingLen) {
+        const usable = pendingLen - (pendingLen % 4);
+        if (!usable) {
+            return pendingLen;
+        }
+
+        this.chunks.push(decodeBase64Bytes(this.pending, usable));
+
+        const tail = pendingLen - usable;
+        for (let i = 0; i < tail; i++) {
+            this.pending[i] = this.pending[usable + i];
+        }
+        return tail;
     }
 
     finalize() {
-        if (this.remainder && !/^=+$/.test(this.remainder)) {
-            this.chunks.push(decodeBase64(this.remainder));
+        if (this.pendingLen) {
+            this.chunks.push(decodeBase64Bytes(this.pending, this.pendingLen));
+            this.pendingLen = 0;
         }
 
         return blobToArrayBuffer(new Blob(this.chunks, { type: 'application/octet-stream' }));
