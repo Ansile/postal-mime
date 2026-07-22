@@ -6,8 +6,8 @@
         "runtimeVersion": "node v24.12.0",
         "os": "Darwin 25.4.0 arm64",
         "cpu": "Apple M4 Pro",
-        "gitSha": "8b4a0e1",
-        "date": "2026-07-22T12:06:38.822Z"
+        "gitSha": "1424d30",
+        "date": "2026-07-22T12:25:38.463Z"
     },
     "fixtures": {
         "full.eml": {
@@ -24,53 +24,53 @@
             "scenario": "parse-attach-base64",
             "fixture": "full.eml",
             "iterations": 10,
-            "medianMs": 346.53,
-            "meanMs": 349.89,
-            "minMs": 329.2,
-            "maxMs": 373.72,
-            "p99Ms": 373.72,
-            "stddevMs": 12.48,
-            "rmePct": 2.55,
-            "mbps": 45.41
+            "medianMs": 37.7,
+            "meanMs": 38.27,
+            "minMs": 36.96,
+            "maxMs": 41.06,
+            "p99Ms": 41.06,
+            "stddevMs": 1.48,
+            "rmePct": 2.77,
+            "mbps": 417.47
         },
         {
             "scenario": "parse-default",
             "fixture": "full.eml",
             "iterations": 10,
-            "medianMs": 159.29,
-            "meanMs": 158.35,
-            "minMs": 152.19,
-            "maxMs": 165.75,
-            "p99Ms": 165.75,
-            "stddevMs": 3.87,
-            "rmePct": 1.75,
-            "mbps": 98.79
+            "medianMs": 28.43,
+            "meanMs": 29.04,
+            "minMs": 27.56,
+            "maxMs": 33.48,
+            "p99Ms": 33.48,
+            "stddevMs": 1.83,
+            "rmePct": 4.5,
+            "mbps": 553.45
         },
         {
             "scenario": "parse-attach-base64",
             "fixture": "msg-attachments.eml",
             "iterations": 10,
-            "medianMs": 319.93,
-            "meanMs": 320.87,
-            "minMs": 303.22,
-            "maxMs": 336.29,
-            "p99Ms": 336.29,
-            "stddevMs": 10.87,
-            "rmePct": 2.42,
-            "mbps": 43.37
+            "medianMs": 34.75,
+            "meanMs": 35.29,
+            "minMs": 32.79,
+            "maxMs": 42.34,
+            "p99Ms": 42.34,
+            "stddevMs": 2.95,
+            "rmePct": 5.98,
+            "mbps": 399.21
         },
         {
             "scenario": "parse-default",
             "fixture": "msg-attachments.eml",
             "iterations": 10,
-            "medianMs": 145.15,
-            "meanMs": 144.99,
-            "minMs": 140.8,
-            "maxMs": 148.07,
-            "p99Ms": 148.07,
-            "stddevMs": 2.88,
-            "rmePct": 1.42,
-            "mbps": 95.59
+            "medianMs": 24.44,
+            "meanMs": 24.64,
+            "minMs": 24.04,
+            "maxMs": 25.67,
+            "p99Ms": 25.67,
+            "stddevMs": 0.59,
+            "rmePct": 1.72,
+            "mbps": 567.7
         }
     ]
 }
