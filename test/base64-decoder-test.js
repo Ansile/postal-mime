@@ -16,6 +16,36 @@ SGVsbG8gV29ybGQ=`);
     assert.strictEqual(email.text.trim(), 'Hello World');
 });
 
+test('Base64 decoder - truncated tail (1 leftover char) keeps legacy bytes', async () => {
+    // 'QUJDR' has 5 valid base64 chars: an invalid single leftover char has
+    // always decoded to [c<<2, 0, 0] — optimization must not change this
+    const mail = Buffer.from(`Content-Type: application/octet-stream
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment; filename="broken.bin"
+
+QUJDR`);
+
+    const parser = new PostalMime();
+    const email = await parser.parse(mail);
+
+    assert.strictEqual(email.attachments.length, 1);
+    assert.deepStrictEqual(Array.from(new Uint8Array(email.attachments[0].content)), [65, 66, 67, 68, 0, 0]);
+});
+
+test('Base64 decoder - single leftover char across lines keeps legacy bytes', async () => {
+    const mail = Buffer.from(`Content-Type: application/octet-stream
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment; filename="broken.bin"
+
+QUJD
+R`);
+
+    const parser = new PostalMime();
+    const email = await parser.parse(mail);
+
+    assert.deepStrictEqual(Array.from(new Uint8Array(email.attachments[0].content)), [65, 66, 67, 68, 0, 0]);
+});
+
 test('Base64 decoder - longer text', async () => {
     const mail = Buffer.from(`Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: base64

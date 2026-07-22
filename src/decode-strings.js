@@ -53,6 +53,10 @@ export function decodeBase64Bytes(codes, len) {
         bufferLength += 2;
     } else if (remainder === 2) {
         bufferLength += 1;
+    } else if (remainder === 1) {
+        // matches historic decodeBase64: a lone leftover char (invalid
+        // base64) decodes to [c<<2, 0, 0]
+        bufferLength += 3;
     }
 
     const arrayBuffer = new ArrayBuffer(bufferLength);
@@ -78,6 +82,9 @@ export function decodeBase64Bytes(codes, len) {
         let encoded2 = base64Lookup[codes[i + 1]];
         bytes[p++] = (base64Lookup[codes[i]] << 2) | (encoded2 >> 4);
         bytes[p] = ((encoded2 & 15) << 4) | (base64Lookup[codes[i + 2]] >> 2);
+    } else if (remainder === 1) {
+        bytes[p] = base64Lookup[codes[i]] << 2;
+        // the two remaining bytes stay zero
     }
 
     return arrayBuffer;

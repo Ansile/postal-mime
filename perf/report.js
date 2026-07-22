@@ -77,7 +77,14 @@ const report = {
         runtimeVersion: await runtimeVersion(),
         os: `${os.type()} ${os.release()} ${os.arch()}`,
         cpu: os.cpus()[0]?.model || 'unknown',
-        gitSha: tryExec('git rev-parse --short HEAD'),
+        gitSha: (() => {
+            const sha = tryExec('git rev-parse --short HEAD');
+            if (!sha) {
+                return null;
+            }
+            // a dirty tree means the sha cannot reproduce this measurement
+            return tryExec('git status --porcelain') ? `${sha}-dirty` : sha;
+        })(),
         date: new Date().toISOString()
     },
     fixtures: manifest.fixtures,
