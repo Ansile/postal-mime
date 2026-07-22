@@ -13,6 +13,10 @@ export default class PassThroughDecoder {
     }
 
     finalize() {
-        return concatChunks(this.chunks);
+        // release working state: the chunks hold views into the input buffer
+        const chunks = this.chunks;
+        this.chunks = [];
+
+        return concatChunks(chunks);
     }
 }

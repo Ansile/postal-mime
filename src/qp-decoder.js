@@ -116,6 +116,11 @@ export default class QPDecoder {
             this.remainder = '';
         }
 
-        return concatChunks(this.chunks);
+        // release working state: the decoder instance stays referenced
+        // by its MIME node for as long as the parser is alive
+        const chunks = this.chunks;
+        this.chunks = [];
+
+        return concatChunks(chunks);
     }
 }

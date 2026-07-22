@@ -62,7 +62,7 @@ for (const file of raw.files) {
                 p99Ms: round(b.p99),
                 stddevMs: round(b.sd),
                 rmePct: round(b.rme),
-                mbps: fixtureMeta ? round(fixtureMeta.sizeBytes / 1024 / 1024 / (b.median / 1000)) : null
+                mbps: fixtureMeta && b.median > 0 ? round(fixtureMeta.sizeBytes / 1024 / 1024 / (b.median / 1000)) : null
             });
         }
     }
@@ -120,7 +120,7 @@ let failed = false;
 console.log(`\n[${env}] ${report.meta.runtimeVersion} | lib ${report.meta.lib}@${report.meta.libVersion}`);
 const rows = results.map(r => {
     const base = baseline?.results.find(b => b.fixture === r.fixture && b.scenario === r.scenario);
-    const delta = base ? ((r.medianMs - base.medianMs) / base.medianMs) * 100 : null;
+    const delta = base && base.medianMs > 0 ? ((r.medianMs - base.medianMs) / base.medianMs) * 100 : null;
     if (assertPct && delta != null && delta > assertPct) {
         failed = true;
     }
