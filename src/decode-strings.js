@@ -110,6 +110,38 @@ export function getDecoder(charset) {
 }
 
 /**
+ * Concatenates decoder output chunks (ArrayBuffer | Uint8Array | string)
+ * into a single ArrayBuffer. Strings are encoded as UTF-8, matching what
+ * `new Blob(chunks)` used to do here, without the extra Blob copy.
+ * @param {Array<ArrayBuffer|Uint8Array|string>} chunks Chunks to concatenate
+ * @returns {ArrayBuffer} Concatenated value
+ */
+export function concatChunks(chunks) {
+    let total = 0;
+    const parts = new Array(chunks.length);
+
+    for (let i = 0; i < chunks.length; i++) {
+        let part = chunks[i];
+        if (typeof part === 'string') {
+            part = textEncoder.encode(part);
+        } else if (part instanceof ArrayBuffer) {
+            part = new Uint8Array(part);
+        }
+        parts[i] = part;
+        total += part.length;
+    }
+
+    const result = new Uint8Array(total);
+    let pos = 0;
+    for (let i = 0; i < parts.length; i++) {
+        result.set(parts[i], pos);
+        pos += parts[i].length;
+    }
+
+    return result.buffer;
+}
+
+/**
  * Converts a Blob into an ArrayBuffer
  * @param {Blob} blob Blob to convert
  * @returns {ArrayBuffer} Converted value

@@ -1,4 +1,4 @@
-import { decodeBase64Bytes, blobToArrayBuffer } from './decode-strings.js';
+import { decodeBase64Bytes, concatChunks } from './decode-strings.js';
 
 // Bytes that belong to the base64 alphabet (padding excluded — decodeBase64Bytes
 // derives the tail length from the code count, so '=' carries no information here)
@@ -60,6 +60,6 @@ export default class Base64Decoder {
             this.pendingLen = 0;
         }
 
-        return blobToArrayBuffer(new Blob(this.chunks, { type: 'application/octet-stream' }));
+        return concatChunks(this.chunks);
     }
 }
