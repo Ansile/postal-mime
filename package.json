@@ -16,6 +16,11 @@
     "scripts": {
         "build": "node scripts/build-cjs.js",
         "test": "npm run lint && npm run type-check && node --test",
+        "perf:node": "vitest bench --run --config perf/vitest.node.config.js && node perf/report.js node",
+        "perf:browser": "vitest bench --run --config perf/vitest.browser.config.js && node perf/report.js chromium",
+        "perf": "npm run perf:node && npm run perf:browser",
+        "perf:baseline": "cross-env PERF_UPDATE_BASELINE=1 npm run perf",
+        "perf:profile": "cross-env PERF_PROFILE=1 vitest run --config perf/vitest.profile.config.js",
         "lint": "eslint",
         "type-check": "tsc --noEmit",
         "update": "rm -rf node_modules package-lock.json && ncu -u && npm install",

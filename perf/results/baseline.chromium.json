@@ -1,0 +1,76 @@
+{
+    "meta": {
+        "lib": "postal-mime",
+        "libVersion": "2.7.5",
+        "env": "chromium",
+        "runtimeVersion": "chromium 143.0.7499.4 (playwright 1.57.0)",
+        "os": "Darwin 25.4.0 arm64",
+        "cpu": "Apple M4 Pro",
+        "gitSha": "4b775a5",
+        "date": "2026-07-22T11:49:18.644Z"
+    },
+    "fixtures": {
+        "full.eml": {
+            "sizeBytes": 16501065,
+            "sha256": "d71dacb9dc54f6d69419633d4e5386b90403ef359605945fb0852d00a173a8ca"
+        },
+        "msg-attachments.eml": {
+            "sizeBytes": 14548277,
+            "sha256": "cf6114858560e4370e3bc43fd90c313aa3bd7168f31c4fd4d737d5a60f9a2303"
+        }
+    },
+    "results": [
+        {
+            "scenario": "parse-attach-base64",
+            "fixture": "full.eml",
+            "iterations": 10,
+            "medianMs": 359.4,
+            "meanMs": 359.39,
+            "minMs": 294.1,
+            "maxMs": 433.6,
+            "p99Ms": 433.6,
+            "stddevMs": 41.79,
+            "rmePct": 8.32,
+            "mbps": 43.79
+        },
+        {
+            "scenario": "parse-default",
+            "fixture": "full.eml",
+            "iterations": 10,
+            "medianMs": 204.1,
+            "meanMs": 206.12,
+            "minMs": 180,
+            "maxMs": 254.4,
+            "p99Ms": 254.4,
+            "stddevMs": 23.38,
+            "rmePct": 8.11,
+            "mbps": 77.1
+        },
+        {
+            "scenario": "parse-attach-base64",
+            "fixture": "msg-attachments.eml",
+            "iterations": 10,
+            "medianMs": 324.15,
+            "meanMs": 322.8,
+            "minMs": 278.9,
+            "maxMs": 380,
+            "p99Ms": 380,
+            "stddevMs": 37.4,
+            "rmePct": 8.29,
+            "mbps": 42.8
+        },
+        {
+            "scenario": "parse-default",
+            "fixture": "msg-attachments.eml",
+            "iterations": 10,
+            "medianMs": 176.5,
+            "meanMs": 176.06,
+            "minMs": 163.9,
+            "maxMs": 185.9,
+            "p99Ms": 185.9,
+            "stddevMs": 7.24,
+            "rmePct": 2.94,
+            "mbps": 78.61
+        }
+    ]
+}

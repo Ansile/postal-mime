@@ -7,4 +7,5 @@ yarn.lock
 CLAUDE.md
 *.patch
 perf/results/latest.*.json
+perf/results/raw.*.json
 perf/profiles
