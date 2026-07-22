@@ -134,21 +134,14 @@ export default class PostalMime {
 
     readLine() {
         let startPos = this.readPos;
-        let endPos = this.readPos;
 
-        while (this.readPos < this.av.length) {
-            const c = this.av[this.readPos++];
+        let lfPos = this.av.indexOf(0x0a, this.readPos);
+        let endPos = lfPos === -1 ? this.av.length : lfPos;
+        this.readPos = lfPos === -1 ? this.av.length : lfPos + 1;
 
-            if (c !== 0x0d && c !== 0x0a) {
-                endPos = this.readPos;
-            }
-
-            if (c === 0x0a) {
-                return {
-                    bytes: new Uint8Array(this.buf, startPos, endPos - startPos),
-                    done: this.readPos >= this.av.length
-                };
-            }
+        // trim trailing CR/LF
+        while (endPos > startPos && (this.av[endPos - 1] === 0x0d || this.av[endPos - 1] === 0x0a)) {
+            endPos--;
         }
 
         return {
