@@ -1,0 +1,166 @@
+{
+    "meta": {
+        "lib": "postal-mime",
+        "libVersion": "2.7.5",
+        "env": "node",
+        "runtimeVersion": "node v24.12.0",
+        "os": "Darwin 25.4.0 arm64",
+        "cpu": "Apple M4 Pro",
+        "gitSha": "00c53ef",
+        "date": "2026-07-22T13:58:05.573Z"
+    },
+    "fixtures": {
+        "full.eml": {
+            "sizeBytes": 16501065,
+            "sha256": "d71dacb9dc54f6d69419633d4e5386b90403ef359605945fb0852d00a173a8ca"
+        },
+        "msg-attachments.eml": {
+            "sizeBytes": 14548277,
+            "sha256": "cf6114858560e4370e3bc43fd90c313aa3bd7168f31c4fd4d737d5a60f9a2303"
+        },
+        "attach.eml": {
+            "sizeBytes": 940065,
+            "sha256": "012ab99ce7764364ff491fec0b1840c05c0a86a0626a9385de02bda75e12e0ac"
+        },
+        "attach-inline.eml": {
+            "sizeBytes": 522230,
+            "sha256": "1269c382f9b4ba4ce41e4eecf54c9c0a3a421460a243d8401eea70d5252c54de"
+        },
+        "multipart.eml": {
+            "sizeBytes": 4924,
+            "sha256": "d4ce1406d729727fd46055d7eb999384e9a7d7c8749af7e03d76c88f842c9b98"
+        }
+    },
+    "results": [
+        {
+            "scenario": "parse-attach-base64",
+            "fixture": "attach-inline.eml",
+            "iterations": 300,
+            "medianMs": 1.26,
+            "meanMs": 1.3,
+            "minMs": 1.16,
+            "maxMs": 3.18,
+            "p99Ms": 2.36,
+            "stddevMs": 0.21,
+            "rmePct": 1.86,
+            "mbps": 395.39
+        },
+        {
+            "scenario": "parse-default",
+            "fixture": "attach-inline.eml",
+            "iterations": 300,
+            "medianMs": 0.95,
+            "meanMs": 1.02,
+            "minMs": 0.88,
+            "maxMs": 4.92,
+            "p99Ms": 1.67,
+            "stddevMs": 0.27,
+            "rmePct": 3.02,
+            "mbps": 523.54
+        },
+        {
+            "scenario": "parse-attach-base64",
+            "fixture": "attach.eml",
+            "iterations": 300,
+            "medianMs": 2.21,
+            "meanMs": 2.32,
+            "minMs": 2.02,
+            "maxMs": 5.45,
+            "p99Ms": 3.53,
+            "stddevMs": 0.35,
+            "rmePct": 1.7,
+            "mbps": 406.48
+        },
+        {
+            "scenario": "parse-default",
+            "fixture": "attach.eml",
+            "iterations": 300,
+            "medianMs": 1.76,
+            "meanMs": 1.8,
+            "minMs": 1.57,
+            "maxMs": 3.73,
+            "p99Ms": 2.8,
+            "stddevMs": 0.22,
+            "rmePct": 1.41,
+            "mbps": 509.74
+        },
+        {
+            "scenario": "parse-attach-base64",
+            "fixture": "full.eml",
+            "iterations": 10,
+            "medianMs": 39.21,
+            "meanMs": 39.55,
+            "minMs": 38.58,
+            "maxMs": 42.46,
+            "p99Ms": 42.46,
+            "stddevMs": 1.13,
+            "rmePct": 2.04,
+            "mbps": 401.32
+        },
+        {
+            "scenario": "parse-default",
+            "fixture": "full.eml",
+            "iterations": 10,
+            "medianMs": 31.47,
+            "meanMs": 31.64,
+            "minMs": 30.65,
+            "maxMs": 32.98,
+            "p99Ms": 32.98,
+            "stddevMs": 0.77,
+            "rmePct": 1.75,
+            "mbps": 500.05
+        },
+        {
+            "scenario": "parse-attach-base64",
+            "fixture": "msg-attachments.eml",
+            "iterations": 10,
+            "medianMs": 33.54,
+            "meanMs": 33.59,
+            "minMs": 32.59,
+            "maxMs": 35.03,
+            "p99Ms": 35.03,
+            "stddevMs": 0.77,
+            "rmePct": 1.63,
+            "mbps": 413.67
+        },
+        {
+            "scenario": "parse-default",
+            "fixture": "msg-attachments.eml",
+            "iterations": 10,
+            "medianMs": 26.05,
+            "meanMs": 26.34,
+            "minMs": 24.95,
+            "maxMs": 28.8,
+            "p99Ms": 28.8,
+            "stddevMs": 1.26,
+            "rmePct": 3.41,
+            "mbps": 532.69
+        },
+        {
+            "scenario": "parse-attach-base64",
+            "fixture": "multipart.eml",
+            "iterations": 300,
+            "medianMs": 0.04,
+            "meanMs": 0.05,
+            "minMs": 0.03,
+            "maxMs": 1.51,
+            "p99Ms": 0.06,
+            "stddevMs": 0.08,
+            "rmePct": 19.74,
+            "mbps": 107.33
+        },
+        {
+            "scenario": "parse-default",
+            "fixture": "multipart.eml",
+            "iterations": 300,
+            "medianMs": 0.04,
+            "meanMs": 0.04,
+            "minMs": 0.03,
+            "maxMs": 0.06,
+            "p99Ms": 0.05,
+            "stddevMs": 0,
+            "rmePct": 1.08,
+            "mbps": 116.07
+        }
+    ]
+}

@@ -8,6 +8,8 @@
 example
 test
 scripts
+perf
+docs
 .DS_Store
 *.patch
 .idea

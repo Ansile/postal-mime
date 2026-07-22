@@ -1,0 +1,25 @@
+{
+    "description": "Large EML fixtures for performance tests (anonymized via scripts/anonymize-eml.js)",
+    "fixtures": {
+        "full.eml": {
+            "sizeBytes": 16501065,
+            "sha256": "d71dacb9dc54f6d69419633d4e5386b90403ef359605945fb0852d00a173a8ca"
+        },
+        "msg-attachments.eml": {
+            "sizeBytes": 14548277,
+            "sha256": "cf6114858560e4370e3bc43fd90c313aa3bd7168f31c4fd4d737d5a60f9a2303"
+        },
+        "attach.eml": {
+            "sizeBytes": 940065,
+            "sha256": "012ab99ce7764364ff491fec0b1840c05c0a86a0626a9385de02bda75e12e0ac"
+        },
+        "attach-inline.eml": {
+            "sizeBytes": 522230,
+            "sha256": "1269c382f9b4ba4ce41e4eecf54c9c0a3a421460a243d8401eea70d5252c54de"
+        },
+        "multipart.eml": {
+            "sizeBytes": 4924,
+            "sha256": "d4ce1406d729727fd46055d7eb999384e9a7d7c8749af7e03d76c88f842c9b98"
+        }
+    }
+}

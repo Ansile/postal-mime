@@ -42,6 +42,54 @@ export function decodeBase64(base64) {
     return arrayBuffer;
 }
 
+// Same as decodeBase64, but takes base64 alphabet byte codes (no padding)
+// instead of a string. `len` limits how many bytes of `codes` are used.
+export function decodeBase64Bytes(codes, len) {
+    const remainder = len % 4;
+    const mainLength = len - remainder;
+
+    let bufferLength = (mainLength / 4) * 3;
+    if (remainder === 3) {
+        bufferLength += 2;
+    } else if (remainder === 2) {
+        bufferLength += 1;
+    } else if (remainder === 1) {
+        // matches historic decodeBase64: a lone leftover char (invalid
+        // base64) decodes to [c<<2, 0, 0]
+        bufferLength += 3;
+    }
+
+    const arrayBuffer = new ArrayBuffer(bufferLength);
+    const bytes = new Uint8Array(arrayBuffer);
+
+    let p = 0;
+    let i = 0;
+
+    for (; i < mainLength; i += 4) {
+        let encoded1 = base64Lookup[codes[i]];
+        let encoded2 = base64Lookup[codes[i + 1]];
+        let encoded3 = base64Lookup[codes[i + 2]];
+        let encoded4 = base64Lookup[codes[i + 3]];
+
+        bytes[p++] = (encoded1 << 2) | (encoded2 >> 4);
+        bytes[p++] = ((encoded2 & 15) << 4) | (encoded3 >> 2);
+        bytes[p++] = ((encoded3 & 3) << 6) | (encoded4 & 63);
+    }
+
+    if (remainder === 2) {
+        bytes[p] = (base64Lookup[codes[i]] << 2) | (base64Lookup[codes[i + 1]] >> 4);
+    } else if (remainder === 3) {
+        let encoded2 = base64Lookup[codes[i + 1]];
+        bytes[p++] = (base64Lookup[codes[i]] << 2) | (encoded2 >> 4);
+        bytes[p] = ((encoded2 & 15) << 4) | (base64Lookup[codes[i + 2]] >> 2);
+    } else if (remainder === 1) {
+        bytes[p] = base64Lookup[codes[i]] << 2;
+        // the two remaining bytes stay zero
+    }
+
+    return arrayBuffer;
+}
+
 // Charset aliases that the WHATWG Encoding Standard (and thus TextDecoder in
 // browsers and Workers) does not recognize, but that map cleanly to a supported
 // encoding. Node's ICU-backed TextDecoder resolves these natively; strict WHATWG
@@ -66,6 +114,38 @@ export function getDecoder(charset) {
     }
 
     return decoder;
+}
+
+/**
+ * Concatenates decoder output chunks (ArrayBuffer | Uint8Array | string)
+ * into a single ArrayBuffer. Strings are encoded as UTF-8, matching what
+ * `new Blob(chunks)` used to do here, without the extra Blob copy.
+ * @param {Array<ArrayBuffer|Uint8Array|string>} chunks Chunks to concatenate
+ * @returns {ArrayBuffer} Concatenated value
+ */
+export function concatChunks(chunks) {
+    let total = 0;
+    const parts = new Array(chunks.length);
+
+    for (let i = 0; i < chunks.length; i++) {
+        let part = chunks[i];
+        if (typeof part === 'string') {
+            part = textEncoder.encode(part);
+        } else if (part instanceof ArrayBuffer) {
+            part = new Uint8Array(part);
+        }
+        parts[i] = part;
+        total += part.length;
+    }
+
+    const result = new Uint8Array(total);
+    let pos = 0;
+    for (let i = 0; i < parts.length; i++) {
+        result.set(parts[i], pos);
+        pos += parts[i].length;
+    }
+
+    return result.buffer;
 }
 
 /**

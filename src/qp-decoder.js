@@ -1,4 +1,4 @@
-import { blobToArrayBuffer } from './decode-strings.js';
+import { concatChunks } from './decode-strings.js';
 
 // Regex patterns compiled once for performance
 const VALID_QP_REGEX = /^=[a-f0-9]{2}$/i;
@@ -116,7 +116,11 @@ export default class QPDecoder {
             this.remainder = '';
         }
 
-        // convert an array of arraybuffers into a blob and then back into a single arraybuffer
-        return blobToArrayBuffer(new Blob(this.chunks, { type: 'application/octet-stream' }));
+        // release working state: the decoder instance stays referenced
+        // by its MIME node for as long as the parser is alive
+        const chunks = this.chunks;
+        this.chunks = [];
+
+        return concatChunks(chunks);
     }
 }

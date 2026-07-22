@@ -50,7 +50,9 @@ export default class PostalMime {
         await this.root.finalize();
     }
 
-    async processLine(line, isFinal) {
+    // returns a promise only when async work (node finalization) is needed,
+    // so the caller can skip a microtask hop on ordinary lines
+    processLine(line, isFinal) {
         let boundaries = this.boundaries;
 
         // check if this is a mime boundary
@@ -101,27 +103,7 @@ export default class PostalMime {
                     continue;
                 }
 
-                if (isTerminator) {
-                    await boundary.node.finalize();
-
-                    this.currentNode = boundary.node.parentNode || this.root;
-                } else {
-                    // finalize any open child nodes (should be just one though)
-                    await boundary.node.finalizeChildNodes();
-
-                    this.currentNode = new MimeNode({
-                        postalMime: this,
-                        parentNode: boundary.node,
-                        parentMultipartType: boundary.node.contentType.multipart,
-                        ...this.mimeOptions
-                    });
-                }
-
-                if (isFinal) {
-                    return this.finalize();
-                }
-
-                return;
+                return this.processBoundary(boundary, isTerminator, isFinal);
             }
         }
 
@@ -132,23 +114,38 @@ export default class PostalMime {
         }
     }
 
+    async processBoundary(boundary, isTerminator, isFinal) {
+        if (isTerminator) {
+            await boundary.node.finalize();
+
+            this.currentNode = boundary.node.parentNode || this.root;
+        } else {
+            // finalize any open child nodes (should be just one though)
+            await boundary.node.finalizeChildNodes();
+
+            this.currentNode = new MimeNode({
+                postalMime: this,
+                parentNode: boundary.node,
+                parentMultipartType: boundary.node.contentType.multipart,
+                ...this.mimeOptions
+            });
+        }
+
+        if (isFinal) {
+            return this.finalize();
+        }
+    }
+
     readLine() {
         let startPos = this.readPos;
-        let endPos = this.readPos;
 
-        while (this.readPos < this.av.length) {
-            const c = this.av[this.readPos++];
+        let lfPos = this.av.indexOf(0x0a, this.readPos);
+        let endPos = lfPos === -1 ? this.av.length : lfPos;
+        this.readPos = lfPos === -1 ? this.av.length : lfPos + 1;
 
-            if (c !== 0x0d && c !== 0x0a) {
-                endPos = this.readPos;
-            }
-
-            if (c === 0x0a) {
-                return {
-                    bytes: new Uint8Array(this.buf, startPos, endPos - startPos),
-                    done: this.readPos >= this.av.length
-                };
-            }
+        // trim trailing CR/LF
+        while (endPos > startPos && (this.av[endPos - 1] === 0x0d || this.av[endPos - 1] === 0x0a)) {
+            endPos--;
         }
 
         return {
@@ -472,7 +469,10 @@ export default class PostalMime {
         while (this.readPos < this.av.length) {
             const line = this.readLine();
 
-            await this.processLine(line.bytes, line.done);
+            const pending = this.processLine(line.bytes, line.done);
+            if (pending) {
+                await pending;
+            }
         }
 
         await this.processNodeTree();

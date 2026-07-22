@@ -1,4 +1,6 @@
-import { blobToArrayBuffer } from './decode-strings.js';
+import { concatChunks } from './decode-strings.js';
+
+const NEWLINE = new Uint8Array([0x0a]);
 
 export default class PassThroughDecoder {
     constructor() {
@@ -7,11 +9,14 @@ export default class PassThroughDecoder {
 
     update(line) {
         this.chunks.push(line);
-        this.chunks.push('\n');
+        this.chunks.push(NEWLINE);
     }
 
     finalize() {
-        // convert an array of arraybuffers into a blob and then back into a single arraybuffer
-        return blobToArrayBuffer(new Blob(this.chunks, { type: 'application/octet-stream' }));
+        // release working state: the chunks hold views into the input buffer
+        const chunks = this.chunks;
+        this.chunks = [];
+
+        return concatChunks(chunks);
     }
 }

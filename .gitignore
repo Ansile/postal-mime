@@ -6,3 +6,6 @@ yarn.lock
 .claude
 CLAUDE.md
 *.patch
+perf/results/latest.*.json
+perf/results/raw.*.json
+perf/profiles

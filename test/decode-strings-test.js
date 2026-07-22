@@ -8,6 +8,7 @@ import {
     getHex,
     blobToArrayBuffer,
     decodeBase64,
+    decodeBase64Bytes,
     decodeParameterValueContinuations
 } from '../src/decode-strings.js';
 
@@ -581,6 +582,25 @@ test('decodeBase64 - single character (2 base64 chars)', () => {
     const result = decodeBase64('QQ==');
     const text = new TextDecoder().decode(result);
     assert.strictEqual(text, 'A');
+});
+
+// decodeBase64Bytes must produce byte-identical output to decodeBase64 for
+// every unpadded tail length (len % 4 = 0/1/2/3), including the invalid
+// single leftover char case (len % 4 = 1) that decodes to [c<<2, 0, 0]
+test('decodeBase64Bytes - matches decodeBase64 for all tail lengths', () => {
+    const inputs = ['', 'QUJD', 'QUJDR', 'QUJDRk', 'QUJDRkc', 'R', 'Rk', 'Rkc', 'SGVsbG8gV29ybGQhIQ'];
+    for (const input of inputs) {
+        const expected = Array.from(new Uint8Array(decodeBase64(input)));
+        const codes = new TextEncoder().encode(input);
+        const actual = Array.from(new Uint8Array(decodeBase64Bytes(codes, codes.length)));
+        assert.deepStrictEqual(actual, expected, `mismatch for input ${JSON.stringify(input)} (len % 4 = ${input.length % 4})`);
+    }
+});
+
+test('decodeBase64Bytes - respects len argument over buffer size', () => {
+    const codes = new TextEncoder().encode('QUJDRA==');
+    const result = new Uint8Array(decodeBase64Bytes(codes, 4));
+    assert.deepStrictEqual(Array.from(result), [65, 66, 67]);
 });
 
 // decodeParameterValueContinuations tests
