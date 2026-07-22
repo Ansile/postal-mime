@@ -39,13 +39,16 @@
     "license": "MIT-0",
     "devDependencies": {
         "@types/node": "25.5.0",
+        "@vitest/browser": "3.2.4",
         "cross-blob": "3.0.2",
         "cross-env": "10.1.0",
         "esbuild": "0.27.4",
         "eslint": "8.57.0",
         "eslint-cli": "1.1.1",
         "iframe-resizer": "4.3.6",
+        "playwright": "1.57.0",
         "prettier": "3.8.1",
-        "typescript": "5.9.3"
+        "typescript": "5.9.3",
+        "vitest": "3.2.4"
     }
 }

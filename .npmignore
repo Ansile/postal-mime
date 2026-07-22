@@ -8,6 +8,9 @@
 example
 test
 scripts
+perf
+docs
+vitest.config.js
 .DS_Store
 *.patch
 .idea
